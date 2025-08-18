@@ -1,0 +1,73 @@
+{
+  "staking_rewards_system": {
+    "ado_type": "cw20-staking",
+    "instantiate_msg": {
+      "staking_token": "property_shares_token_address",
+      "reward_token": "property_shares_token_address",
+      "reward_rate": "0.08",
+      "min_staking_period": 2592000,
+      "max_staking_period": 31536000,
+      "early_withdrawal_penalty": "0.05",
+      "modules": [
+        {
+          "module_type": "ownership",
+          "config": {
+            "owner": "platform_address",
+            "expiration": null
+          }
+        },
+        {
+          "module_type": "rates",
+          "config": {
+            "action": "stake",
+            "rate": "0.001",
+            "recipients": [
+              {
+                "address": "platform_address",
+                "percent": "1.0"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "description": "Staking contract for earning additional rewards on property shares"
+  },
+  "bonus_reward_pools": {
+    "long_term_holder_pool": {
+      "min_stake_duration": 15552000,
+      "bonus_multiplier": "1.5",
+      "description": "6-month minimum stake for 1.5x rewards"
+    },
+    "early_investor_pool": {
+      "qualification": "first_100_investors",
+      "bonus_multiplier": "1.2",
+      "description": "Early investor bonus for first 100 participants"
+    },
+    "high_value_pool": {
+      "min_stake_amount": 100000,
+      "bonus_multiplier": "1.3",
+      "description": "High-value staker bonus for stakes over $100k"
+    }
+  },
+  "governance_voting": {
+    "ado_type": "voting",
+    "instantiate_msg": {
+      "voting_token": "staked_shares_token_address",
+      "proposal_deposit": "1000",
+      "voting_period": 604800,
+      "quorum": "0.33",
+      "threshold": "0.5",
+      "modules": [
+        {
+          "module_type": "ownership",
+          "config": {
+            "owner": "platform_address",
+            "expiration": null
+          }
+        }
+      ]
+    },
+    "description": "Governance voting for platform decisions using staked shares"
+  }
+}

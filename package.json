@@ -1,0 +1,27 @@
+{
+  "name": "digital-homes-platform",
+  "version": "1.0.0",
+  "description": "AI-Powered Fractionalized Real Estate Investment Platform",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\" \"npm run ai-service\"",
+    "frontend": "cd frontend && npm start",
+    "backend": "cd backend && npm run dev",
+    "ai-service": "cd ai-valuation && python app.py",
+    "build": "cd frontend && npm run build",
+    "test": "jest",
+    "install-all": "npm install && cd frontend && npm install && cd ../backend && npm install && cd ../ai-valuation && pip install -r requirements.txt"
+  },
+  "keywords": ["real-estate", "blockchain", "ai", "tokenization", "andromeda"],
+  "author": "Digital Homes Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "jest": "^29.7.0"
+  },
+  "dependencies": {
+    "@cosmjs/cosmwasm-stargate": "^0.32.2",
+    "@cosmjs/proto-signing": "^0.32.2",
+    "@cosmjs/stargate": "^0.32.2"
+  }
+}

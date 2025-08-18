@@ -1,0 +1,147 @@
+{
+  "property_deed_nft": {
+    "ado_type": "cw721",
+    "instantiate_msg": {
+      "name": "Digital Homes Property Deeds",
+      "symbol": "DHPD",
+      "minter": "creator_address_here",
+      "modules": [
+        {
+          "module_type": "royalties",
+          "config": {
+            "royalty_fee": "0.025",
+            "recipients": [
+              {
+                "address": "platform_address",
+                "percent": "1.0"
+              }
+            ]
+          }
+        },
+        {
+          "module_type": "ownership",
+          "config": {
+            "owner": "platform_address",
+            "expiration": null
+          }
+        }
+      ]
+    },
+    "description": "NFT representing ownership deed of a real estate property"
+  },
+  "property_shares_token": {
+    "ado_type": "cw20",
+    "instantiate_msg": {
+      "name": "Property Shares Token",
+      "symbol": "PST",
+      "decimals": 6,
+      "initial_balances": [],
+      "mint": {
+        "minter": "creator_address_here",
+        "cap": null
+      },
+      "marketing": {
+        "project": "Digital Homes",
+        "description": "Fractionalized ownership tokens for real estate properties",
+        "marketing": "platform_address",
+        "logo": {
+          "url": "https://digitalhomes.com/logo.png"
+        }
+      },
+      "modules": [
+        {
+          "module_type": "taxation",
+          "config": {
+            "tax_rate": "0.001",
+            "recipients": [
+              {
+                "address": "platform_address",
+                "percent": "1.0"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "description": "Fungible tokens representing fractional ownership of property"
+  },
+  "marketplace": {
+    "ado_type": "marketplace",
+    "instantiate_msg": {
+      "authorized_cw20_address": "property_shares_token_address",
+      "authorized_token_addresses": ["property_deed_nft_address"],
+      "modules": [
+        {
+          "module_type": "rates",
+          "config": {
+            "action": "buy",
+            "rate": "0.025",
+            "recipients": [
+              {
+                "address": "platform_address",
+                "percent": "1.0"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "description": "Marketplace for trading property shares and deeds"
+  },
+  "auction_house": {
+    "ado_type": "auction",
+    "instantiate_msg": {
+      "authorized_token_addresses": ["property_deed_nft_address"],
+      "modules": [
+        {
+          "module_type": "rates",
+          "config": {
+            "action": "sale",
+            "rate": "0.05",
+            "recipients": [
+              {
+                "address": "platform_address",
+                "percent": "1.0"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "description": "Auction system for initial property offerings"
+  },
+  "revenue_splitter": {
+    "ado_type": "splitter",
+    "instantiate_msg": {
+      "recipients": [],
+      "lock_time": null,
+      "modules": [
+        {
+          "module_type": "ownership",
+          "config": {
+            "owner": "platform_address",
+            "expiration": null
+          }
+        }
+      ]
+    },
+    "description": "Automatic distribution of rental income and profits to token holders"
+  },
+  "staking_contract": {
+    "ado_type": "cw20-staking",
+    "instantiate_msg": {
+      "staking_token": "property_shares_token_address",
+      "reward_token": "property_shares_token_address",
+      "modules": [
+        {
+          "module_type": "ownership",
+          "config": {
+            "owner": "platform_address",
+            "expiration": null
+          }
+        }
+      ]
+    },
+    "description": "Staking contract for earning rewards on property shares"
+  }
+}
