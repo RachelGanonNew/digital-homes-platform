@@ -1,0 +1,51 @@
+name: CI - Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install root deps
+        run: npm ci || npm i --no-audit --no-fund
+
+      - name: Install backend deps
+        run: |
+          cd backend
+          npm ci || npm i --no-audit --no-fund
+
+      - name: Install frontend deps
+        run: |
+          cd frontend
+          npm ci || npm i --no-audit --no-fund
+
+      - name: Run backend tests
+        env:
+          NODE_ENV: test
+        run: |
+          cd backend
+          npx jest --runInBand
+
+      - name: Run frontend tests
+        env:
+          CI: true
+        run: |
+          cd frontend
+          npm test -- --watchAll=false
