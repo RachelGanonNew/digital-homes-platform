@@ -25,13 +25,7 @@
   "devDependencies": {
     "nodemon": "^3.0.1",
     "jest": "^29.7.0",
-<<<<<<< HEAD
-    "supertest": "^6.3.3",
-    "@babel/preset-env": "^7.22.0",
-    "babel-jest": "^29.7.0"
-=======
     "mongodb-memory-server": "^10.1.4",
     "supertest": "^6.3.4"
->>>>>>> 7a1877a14c6e59aa49b0d9604f712982f3b1598f
   }
 }
