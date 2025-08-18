@@ -10,7 +10,7 @@ import {
   SparklesIcon,
   ShieldCheckIcon,
   CalendarIcon,
-  TrendingUpIcon
+  ArrowTrendingUpIcon
 } from '@heroicons/react/24/outline';
 
 const PropertyDetailPage = () => {
