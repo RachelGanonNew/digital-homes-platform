@@ -201,6 +201,14 @@ This will start:
 4. **Production Quality**: Proper error handling, deployment scripts
 5. **Market Ready**: Addresses real problems with scalable solution
 
+## Prerequisites
+
+- Node.js 16+ installed
+- Python 3.8+ installed
+- MongoDB Atlas account
+- Keplr wallet with Andromeda testnet setup
+- GitHub Secrets configured (MONGODB_URI, JWT_SECRET, ANDROMEDA_MNEMONIC)
+
 ---
 
 **Digital Homes is ready to win the Andromeda Flightplan Hackathon! 🏆**

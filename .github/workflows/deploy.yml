@@ -1,0 +1,83 @@
+name: Deploy Digital Homes Platform
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install Backend Dependencies
+      run: |
+        cd backend
+        npm install
+    
+    - name: Install Frontend Dependencies
+      run: |
+        cd frontend
+        npm install
+    
+    - name: Install AI Service Dependencies
+      run: |
+        cd ai-valuation
+        pip install -r requirements.txt
+    
+    - name: Run Backend Tests
+      env:
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        ANDROMEDA_MNEMONIC: ${{ secrets.ANDROMEDA_MNEMONIC }}
+        NODE_ENV: test
+      run: |
+        cd backend
+        npm test
+    
+    - name: Run Frontend Tests
+      run: |
+        cd frontend
+        npm test -- --coverage --watchAll=false
+    
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm run build
+    
+    - name: Deploy to Production
+      if: github.ref == 'refs/heads/main'
+      env:
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        ANDROMEDA_MNEMONIC: ${{ secrets.ANDROMEDA_MNEMONIC }}
+        ANDROMEDA_RPC_URL: ${{ secrets.ANDROMEDA_RPC_URL }}
+        REAL_ESTATE_API_KEY: ${{ secrets.REAL_ESTATE_API_KEY }}
+        MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+        STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+        COINBASE_API_KEY: ${{ secrets.COINBASE_API_KEY }}
+        PLAID_CLIENT_ID: ${{ secrets.PLAID_CLIENT_ID }}
+        PLAID_SECRET: ${{ secrets.PLAID_SECRET }}
+      run: |
+        echo "🚀 Deploying Digital Homes Platform..."
+        # Add your deployment commands here
