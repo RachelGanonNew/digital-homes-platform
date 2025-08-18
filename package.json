@@ -12,16 +12,24 @@
     "test": "jest",
     "install-all": "npm install && cd frontend && npm install && cd ../backend && npm install && cd ../ai-valuation && pip install -r requirements.txt"
   },
-  "keywords": ["real-estate", "blockchain", "ai", "tokenization", "andromeda"],
+  "keywords": [
+    "real-estate",
+    "blockchain",
+    "ai",
+    "tokenization",
+    "andromeda"
+  ],
   "author": "Digital Homes Team",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "supertest": "^7.1.4"
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.32.2",
     "@cosmjs/proto-signing": "^0.32.2",
-    "@cosmjs/stargate": "^0.32.2"
+    "@cosmjs/stargate": "^0.32.2",
+    "mongoose": "^8.17.1"
   }
 }

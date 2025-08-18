@@ -4,7 +4,7 @@ import {
   ChartBarIcon,
   CurrencyDollarIcon,
   HomeIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   ArrowUpIcon,
   ArrowDownIcon,
   CalendarIcon
@@ -219,18 +219,18 @@ const DashboardPage = () => {
           </div>
 
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Return</p>
-                <p className="text-2xl font-bold text-secondary-600">
-                  +${portfolio.total_return.toLocaleString()}
-                </p>
-                <p className="text-sm text-gray-500">
-                  Invested: ${portfolio.total_invested.toLocaleString()}
-                </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600">Total Return</p>
+                  <p className="text-2xl font-bold text-secondary-600">
+                    +${portfolio.total_return.toLocaleString()}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Invested: ${portfolio.total_invested.toLocaleString()}
+                  </p>
+                </div>
+                <ArrowTrendingUpIcon className="w-8 h-8 text-secondary-600" />
               </div>
-              <TrendingUpIcon className="w-8 h-8 text-secondary-600" />
-            </div>
           </div>
 
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">

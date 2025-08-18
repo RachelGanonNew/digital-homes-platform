@@ -5,8 +5,8 @@ import {
   ArrowsUpDownIcon,
   TagIcon,
   ClockIcon,
-  TrendingUpIcon,
-  TrendingDownIcon
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon
 } from '@heroicons/react/24/outline';
 
 const MarketplacePage = () => {
@@ -149,7 +149,7 @@ const MarketplacePage = () => {
                 <p className="text-sm text-gray-600">24h Volume</p>
                 <p className="text-2xl font-bold text-gray-900">$127K</p>
               </div>
-              <TrendingUpIcon className="w-8 h-8 text-secondary-600" />
+              <ArrowTrendingUpIcon className="w-8 h-8 text-secondary-600" />
             </div>
           </div>
           
