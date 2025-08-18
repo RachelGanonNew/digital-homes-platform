@@ -1,23 +1,14 @@
 const request = require('supertest');
-const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = require('../server');
 
 describe('Digital Homes API Tests', () => {
-  let mongoServer;
   let aiServer;
 
   beforeAll(async () => {
-    // Start in-memory MongoDB
-    mongoServer = await MongoMemoryServer.create();
-    const uri = mongoServer.getUri();
-    await mongoose.connect(uri);
-
     // Start stub AI valuation service on port 5001
     const aiApp = express();
-    aiApp.use(bodyParser.json());
+    aiApp.use(express.json());
     aiApp.post('/valuate', (req, res) => {
       res.json({
         valuation: {
@@ -32,12 +23,6 @@ describe('Digital Homes API Tests', () => {
   });
 
   afterAll(async () => {
-    // Clean up test database and services
-    await mongoose.connection.dropDatabase();
-    await mongoose.connection.close();
-    if (mongoServer) {
-      await mongoServer.stop();
-    }
     if (aiServer) {
       await new Promise((resolve, reject) => aiServer.close(err => err ? reject(err) : resolve()));
     }
