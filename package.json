@@ -9,7 +9,9 @@
     "backend": "cd backend && npm run dev",
     "ai-service": "cd ai-valuation && python app.py",
     "build": "cd frontend && npm run build",
-    "test": "jest",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && NODE_ENV=test npx jest --runInBand",
+    "test:frontend": "cd frontend && CI=true npm test -- --watchAll=false",
     "install-all": "npm install && cd frontend && npm install && cd ../backend && npm install && cd ../ai-valuation && pip install -r requirements.txt"
   },
   "keywords": [

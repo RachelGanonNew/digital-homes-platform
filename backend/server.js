@@ -12,10 +12,13 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/digitalhomes', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// Avoid connecting automatically during tests; the test suite manages the connection lifecycle.
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/digitalhomes', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+}
 
 // Property Schema
 const propertySchema = new mongoose.Schema({
@@ -75,11 +78,15 @@ const transactionSchema = new mongoose.Schema({
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
 // Routes
+const authRoutes = require('./routes/auth');
 
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
+
+// Auth routes
+app.use('/api/auth', authRoutes);
 
 // Get all properties
 app.get('/api/properties', async (req, res) => {
@@ -313,6 +320,11 @@ async function tokenizeProperty(property, totalShares, sharePrice) {
   };
 }
 
-app.listen(PORT, () => {
-  console.log(`Digital Homes Backend running on port ${PORT}`);
-});
+// Only start the HTTP server when not running tests
+if (process.env.NODE_ENV !== 'test' && require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Digital Homes Backend running on port ${PORT}`);
+  });
+}
+
+module.exports = app;

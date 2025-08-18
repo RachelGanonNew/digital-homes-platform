@@ -29,17 +29,28 @@ const upload = multer({
   }
 });
 
+const JWT_SECRET = process.env.JWT_SECRET || 'test-secret';
+
 // Register user
 router.post('/register', async (req, res) => {
   try {
+    if (process.env.NODE_ENV === 'test') {
+      console.log('[AUTH][REGISTER] incoming', req.body);
+    }
     const { address, email, password, profile } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ 
       $or: [{ address }, { email }] 
     });
+    if (process.env.NODE_ENV === 'test') {
+      console.log('[AUTH][REGISTER] existing check', { address, email, exists: !!existingUser });
+    }
 
     if (existingUser) {
+      if (process.env.NODE_ENV === 'test') {
+        console.log('[AUTH][REGISTER] user exists');
+      }
       return res.status(400).json({ error: 'User already exists' });
     }
 
@@ -52,21 +63,24 @@ router.post('/register', async (req, res) => {
       email,
       password: hashedPassword,
       profile: {
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        dateOfBirth: new Date(profile.dateOfBirth),
-        phoneNumber: profile.phoneNumber,
-        country: profile.country,
-        address: profile.address
+        firstName: profile?.firstName,
+        lastName: profile?.lastName,
+        dateOfBirth: profile?.dateOfBirth ? new Date(profile.dateOfBirth) : undefined,
+        phoneNumber: profile?.phoneNumber,
+        country: profile?.country,
+        address: profile?.address
       }
     });
 
     await user.save();
+    if (process.env.NODE_ENV === 'test') {
+      console.log('[AUTH][REGISTER] created user', { email: user.email, address: user.address });
+    }
 
     // Generate JWT
     const token = jwt.sign(
       { address: user.address, email: user.email },
-      process.env.JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -80,6 +94,9 @@ router.post('/register', async (req, res) => {
       }
     });
   } catch (error) {
+    if (process.env.NODE_ENV === 'test') {
+      console.error('[AUTH][REGISTER] error', error);
+    }
     res.status(500).json({ error: error.message });
   }
 });
@@ -91,12 +108,18 @@ router.post('/login', async (req, res) => {
 
     // Find user
     const user = await User.findOne({ email });
+    if (process.env.NODE_ENV === 'test') {
+      console.log('[AUTH][LOGIN] lookup', { email, found: !!user });
+    }
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Check password
     const isValidPassword = await bcrypt.compare(password, user.password);
+    if (process.env.NODE_ENV === 'test') {
+      console.log('[AUTH][LOGIN] password check', { email, isValidPassword });
+    }
     if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
@@ -108,7 +131,7 @@ router.post('/login', async (req, res) => {
     // Generate JWT
     const token = jwt.sign(
       { address: user.address, email: user.email },
-      process.env.JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: '24h' }
     );
 

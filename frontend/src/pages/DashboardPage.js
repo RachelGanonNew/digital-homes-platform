@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { 
   ChartBarIcon,
   CurrencyDollarIcon,
@@ -9,194 +8,56 @@ import {
   ArrowDownIcon,
   CalendarIcon
 } from '@heroicons/react/24/outline';
-import { Line, Doughnut, Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  BarElement,
-} from 'chart.js';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  BarElement
-);
 
 const DashboardPage = () => {
-  const [userAddress] = useState('andr1user123...'); // Mock user address
-  const [portfolio, setPortfolio] = useState(null);
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  return (
+    <div className="max-w-7xl mx-auto px-6 py-12">
+      <h1 className="text-3xl font-bold text-gray-900 mb-8">Dashboard</h1>
 
-  useEffect(() => {
-    fetchUserData();
-  }, []);
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Portfolio Value</p>
+              <p className="text-2xl font-bold text-gray-900">$125,430</p>
+            </div>
+            <CurrencyDollarIcon className="w-8 h-8 text-primary-600" />
+          </div>
+        </div>
 
-  const fetchUserData = async () => {
-    try {
-      // Mock user portfolio data
-      setPortfolio({
-        total_value: 45750,
-        total_invested: 42000,
-        total_return: 3750,
-        return_percentage: 8.93,
-        properties_count: 3,
-        shares_owned: 1250,
-        monthly_dividends: 287.50,
-        properties: [
-          {
-            id: 'PROP_1',
-            name: 'Beverly Hills Luxury Apartment',
-            shares: 500,
-            current_value: 26000,
-            invested: 25000,
-            return_amount: 1000,
-            return_percentage: 4.0,
-            monthly_dividend: 125.50
-          },
-          {
-            id: 'PROP_2',
-            name: 'Miami Beachfront Condo',
-            shares: 250,
-            current_value: 19500,
-            invested: 18750,
-            return_amount: 750,
-            return_percentage: 4.0,
-            monthly_dividend: 89.25
-          },
-          {
-            id: 'PROP_3',
-            name: 'Austin Tech Hub Office',
-            shares: 500,
-            current_value: 13500,
-            invested: 12500,
-            return_amount: 1000,
-            return_percentage: 8.0,
-            monthly_dividend: 72.75
-          }
-        ]
-      });
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">24h Change</p>
+              <div className="flex items-center gap-2">
+                <ArrowUpIcon className="w-5 h-5 text-green-600" />
+                <p className="text-2xl font-bold text-gray-900">+2.3%</p>
+              </div>
+            </div>
+            <ArrowTrendingUpIcon className="w-8 h-8 text-secondary-600" />
+          </div>
+        </div>
 
-      setTransactions([
-        {
-          id: 'TX_1',
-          property_name: 'Beverly Hills Luxury Apartment',
-          type: 'buy',
-          shares: 500,
-          amount: 25000,
-          date: new Date('2024-01-10'),
-          tx_hash: '0xabc123...'
-        },
-        {
-          id: 'TX_2',
-          property_name: 'Miami Beachfront Condo',
-          type: 'buy',
-          shares: 250,
-          amount: 18750,
-          date: new Date('2024-01-08'),
-          tx_hash: '0xdef456...'
-        },
-        {
-          id: 'TX_3',
-          property_name: 'Austin Tech Hub Office',
-          type: 'buy',
-          shares: 500,
-          amount: 12500,
-          date: new Date('2024-01-05'),
-          tx_hash: '0xghi789...'
-        },
-        {
-          id: 'TX_4',
-          property_name: 'Beverly Hills Luxury Apartment',
-          type: 'dividend',
-          shares: 500,
-          amount: 125.50,
-          date: new Date('2024-01-15'),
-          tx_hash: '0xjkl012...'
-        }
-      ]);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Chart data
-  const portfolioValueData = {
-    labels: ['Jan 1', 'Jan 5', 'Jan 10', 'Jan 15', 'Jan 20'],
-    datasets: [
-      {
-        label: 'Portfolio Value',
-        data: [42000, 42500, 43200, 44100, 45750],
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.4,
-      },
-    ],
-  };
-
-  const propertyAllocationData = {
-    labels: portfolio?.properties.map(p => p.name.split(' ')[0]) || [],
-    datasets: [
-      {
-        data: portfolio?.properties.map(p => p.current_value) || [],
-        backgroundColor: [
-          'rgba(59, 130, 246, 0.8)',
-          'rgba(34, 197, 94, 0.8)',
-          'rgba(168, 85, 247, 0.8)',
-        ],
-        borderWidth: 2,
-        borderColor: '#fff',
-      },
-    ],
-  };
-
-  const monthlyDividendsData = {
-    labels: ['Oct', 'Nov', 'Dec', 'Jan'],
-    datasets: [
-      {
-        label: 'Monthly Dividends',
-        data: [245, 267, 278, 287.50],
-        backgroundColor: 'rgba(34, 197, 94, 0.8)',
-        borderColor: 'rgb(34, 197, 94)',
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Properties</p>
+              <p className="text-2xl font-bold text-gray-900">5</p>
+            </div>
+            <HomeIcon className="w-8 h-8 text-gray-600" />
+          </div>
         </div>
       </div>
-    );
-  }
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Investment Dashboard</h1>
-          <p className="text-gray-600">Track your real estate portfolio performance</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <ChartBarIcon className="w-5 h-5 text-primary-600" />
+            Performance
+          </h2>
+          <p className="text-gray-600">Charts and performance details will appear here.</p>
         </div>
+<<<<<<< HEAD
 
         {/* Portfolio Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -418,6 +279,17 @@ const DashboardPage = () => {
               </tbody>
             </table>
           </div>
+=======
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <CalendarIcon className="w-5 h-5 text-primary-600" />
+            Recent Activity
+          </h2>
+          <ul className="space-y-2 text-gray-700">
+            <li className="flex items-center gap-2"><ArrowUpIcon className="w-4 h-4 text-green-600" /> Bought 10 shares of PROP_1</li>
+            <li className="flex items-center gap-2"><ArrowDownIcon className="w-4 h-4 text-red-600" /> Sold 5 shares of PROP_2</li>
+          </ul>
+>>>>>>> 7a1877a14c6e59aa49b0d9604f712982f3b1598f
         </div>
       </div>
     </div>

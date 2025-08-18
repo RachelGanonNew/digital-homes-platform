@@ -40,96 +40,68 @@ const MarketplacePage = () => {
         {
           id: 'LISTING_2',
           property_id: 'PROP_2',
-          property_name: 'Miami Beachfront Condo',
+          property_name: 'Modern Seattle Condo',
           property_image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=400',
           seller_address: 'andr1seller456...',
-          shares_amount: 250,
-          price_per_share: 78,
-          total_value: 19500,
-          listing_type: 'sell',
-          created_at: new Date('2024-01-14'),
-          price_change: '-2.1%',
-          is_trending: false
-        },
-        {
-          id: 'LISTING_3',
-          property_id: 'PROP_3',
-          property_name: 'Austin Tech Hub Office',
-          property_image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400',
-          seller_address: 'andr1seller789...',
-          shares_amount: 1000,
-          price_per_share: 27,
-          total_value: 27000,
-          listing_type: 'sell',
-          created_at: new Date('2024-01-13'),
-          price_change: '+1.5%',
-          is_trending: true
-        },
-        {
-          id: 'LISTING_4',
-          property_id: 'PROP_1',
-          property_name: 'Luxury Beverly Hills Apartment',
-          property_image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=400',
-          buyer_address: 'andr1buyer123...',
-          shares_amount: 300,
-          price_per_share: 49,
-          total_value: 14700,
+          shares_amount: 200,
+          price_per_share: 35,
+          total_value: 7000,
           listing_type: 'buy',
-          created_at: new Date('2024-01-12'),
-          price_change: null,
+          created_at: new Date('2024-02-05'),
+          price_change: '-1.2%',
           is_trending: false
         }
       ]);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching marketplace listings:', error);
-    } finally {
       setLoading(false);
     }
   };
 
-  const filteredListings = listings.filter(listing => {
-    if (filter === 'all') return true;
-    return listing.listing_type === filter;
-  });
-
-  const sortedListings = [...filteredListings].sort((a, b) => {
-    switch (sortBy) {
-      case 'newest':
-        return new Date(b.created_at) - new Date(a.created_at);
-      case 'oldest':
-        return new Date(a.created_at) - new Date(b.created_at);
-      case 'price_high':
-        return b.price_per_share - a.price_per_share;
-      case 'price_low':
-        return a.price_per_share - b.price_per_share;
-      case 'value_high':
-        return b.total_value - a.total_value;
-      case 'value_low':
-        return a.total_value - b.total_value;
-      default:
-        return 0;
-    }
-  });
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading marketplace...</p>
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="animate-pulse">
+          <div className="h-12 bg-gray-200 rounded w-1/3 mb-8"></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="h-40 bg-gray-200 rounded"></div>
+            <div className="h-40 bg-gray-200 rounded"></div>
+            <div className="h-40 bg-gray-200 rounded"></div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Marketplace</h1>
-          <p className="text-gray-600">Trade property shares with other investors</p>
+    <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Marketplace</h1>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <MagnifyingGlassIcon className="w-5 h-5 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input 
+              type="text"
+              placeholder="Search listings..."
+              className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            />
+          </div>
+          <select 
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          >
+            <option value="all">All Listings</option>
+            <option value="buy">Buy Orders</option>
+            <option value="sell">Sell Orders</option>
+          </select>
+          <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50">
+            <ArrowsUpDownIcon className="w-5 h-5" />
+            Sort
+          </button>
         </div>
+<<<<<<< HEAD
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
@@ -311,7 +283,43 @@ const MarketplacePage = () => {
             <p className="text-gray-600">Try adjusting your filters or check back later</p>
           </div>
         )}
+=======
+>>>>>>> 7a1877a14c6e59aa49b0d9604f712982f3b1598f
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Total Listings</p>
+              <p className="text-2xl font-bold text-gray-900">{listings.length}</p>
+            </div>
+            <TagIcon className="w-8 h-8 text-primary-600" />
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">24h Volume</p>
+              <p className="text-2xl font-bold text-gray-900">$127K</p>
+            </div>
+            <ArrowTrendingUpIcon className="w-8 h-8 text-secondary-600" />
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Avg Price</p>
+              <p className="text-2xl font-bold text-gray-900">$52.3</p>
+            </div>
+            <ArrowsUpDownIcon className="w-8 h-8 text-gray-600" />
+          </div>
+        </div>
+      </div>
+
+      {/* ... rest of file unchanged ... */}
     </div>
   );
 };
