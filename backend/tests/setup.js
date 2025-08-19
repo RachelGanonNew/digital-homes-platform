@@ -1,16 +1,22 @@
 const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
 
-// Setup for Jest tests
+let mongoMemoryServer;
+
+// Setup for Jest tests using in-memory MongoDB
 beforeAll(async () => {
-  // Use test database
-  const testDbUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/digitalhomes_test';
-  await mongoose.connect(testDbUri);
+  mongoMemoryServer = await MongoMemoryServer.create();
+  const uri = mongoMemoryServer.getUri();
+  await mongoose.connect(uri);
 });
 
 afterAll(async () => {
   // Clean up and close connection
   await mongoose.connection.dropDatabase();
   await mongoose.connection.close();
+  if (mongoMemoryServer) {
+    await mongoMemoryServer.stop();
+  }
 });
 
 afterEach(async () => {
