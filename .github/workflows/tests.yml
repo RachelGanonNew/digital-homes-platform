@@ -31,6 +31,7 @@ jobs:
           cd backend
           npm ci || npm i --no-audit --no-fund
 
+      # Frontend dependencies install retained only if needed elsewhere; removing frontend tests below
       - name: Install frontend deps
         run: |
           cd frontend
@@ -43,9 +44,4 @@ jobs:
           cd backend
           npx jest --runInBand
 
-      - name: Run frontend tests
-        env:
-          CI: true
-        run: |
-          cd frontend
-          npm test -- --watchAll=false
+      # Frontend tests removed per request
