@@ -9,6 +9,8 @@ on:
 jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     services:
       mongodb:
@@ -45,39 +47,16 @@ jobs:
         cd ai-valuation
         pip install -r requirements.txt
     
-    - name: Run Backend Tests
-      env:
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        ANDROMEDA_MNEMONIC: ${{ secrets.ANDROMEDA_MNEMONIC }}
-        NODE_ENV: test
-      run: |
-        cd backend
-        npm test
-    
-    - name: Run Frontend Tests
-      run: |
-        cd frontend
-        npm test -- --coverage --watchAll=false
+    # Tests are handled in tests.yml; skipping in this workflow
     
     - name: Build Frontend
       run: |
         cd frontend
         npm run build
     
-    - name: Deploy to Production
+    - name: Deploy Frontend to GitHub Pages
       if: github.ref == 'refs/heads/main'
-      env:
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        ANDROMEDA_MNEMONIC: ${{ secrets.ANDROMEDA_MNEMONIC }}
-        ANDROMEDA_RPC_URL: ${{ secrets.ANDROMEDA_RPC_URL }}
-        REAL_ESTATE_API_KEY: ${{ secrets.REAL_ESTATE_API_KEY }}
-        MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
-        STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-        COINBASE_API_KEY: ${{ secrets.COINBASE_API_KEY }}
-        PLAID_CLIENT_ID: ${{ secrets.PLAID_CLIENT_ID }}
-        PLAID_SECRET: ${{ secrets.PLAID_SECRET }}
-      run: |
-        echo "🚀 Deploying Digital Homes Platform..."
-        # Add your deployment commands here
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./frontend/build
