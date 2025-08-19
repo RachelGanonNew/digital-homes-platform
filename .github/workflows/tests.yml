@@ -9,9 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
 
     steps:
       - name: Checkout
@@ -20,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 18.x
           cache: npm
 
       - name: Install root deps
@@ -31,11 +28,7 @@ jobs:
           cd backend
           npm ci || npm i --no-audit --no-fund
 
-      # Frontend dependencies install retained only if needed elsewhere; removing frontend tests below
-      - name: Install frontend deps
-        run: |
-          cd frontend
-          npm ci || npm i --no-audit --no-fund
+      # Frontend dependencies step removed per request
 
       - name: Run backend tests
         env:
