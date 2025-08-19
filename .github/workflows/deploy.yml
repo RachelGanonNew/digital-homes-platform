@@ -47,17 +47,7 @@ jobs:
         cd ai-valuation
         pip install -r requirements.txt
     
-    - name: Run Backend Tests
-      env:
-        MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        ANDROMEDA_MNEMONIC: ${{ secrets.ANDROMEDA_MNEMONIC }}
-        NODE_ENV: test
-      run: |
-        cd backend
-        npm test
-    
-    # Frontend tests removed per request
+    # Tests are handled in tests.yml; skipping in this workflow
     
     - name: Build Frontend
       run: |
