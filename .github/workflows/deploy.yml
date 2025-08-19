@@ -42,26 +42,6 @@ jobs:
         cd frontend
         npm install
     
-    - name: Ensure public/index.html exists
-      run: |
-        if [ ! -f frontend/public/index.html ]; then
-          echo "Public index.html missing; creating a minimal one"
-          mkdir -p frontend/public
-          cat > frontend/public/index.html <<'EOF'
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Digital Homes</title>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
-</html>
-EOF
-        fi
-
     - name: Install AI Service Dependencies
       run: |
         cd ai-valuation
