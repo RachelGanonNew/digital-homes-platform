@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { WalletIcon, CheckCircleIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { WalletIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import walletService from '../services/walletService';
 import toast from 'react-hot-toast';
 
