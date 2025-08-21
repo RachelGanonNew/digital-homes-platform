@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { 
   MagnifyingGlassIcon,
   ArrowsUpDownIcon,
   TagIcon,
-  ClockIcon,
   ArrowTrendingUpIcon,
-  ArrowTrendingDownIcon
 } from '@heroicons/react/24/outline';
 
 const MarketplacePage = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('newest');
 
   useEffect(() => {
     fetchMarketplaceListings();

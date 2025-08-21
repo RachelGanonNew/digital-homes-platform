@@ -9,13 +9,21 @@ class WalletService {
     this.address = null;
     this.isConnected = false;
     this.chainId = process.env.REACT_APP_ANDROMEDA_CHAIN_ID || 'andromeda-1';
-    this.rpcUrl = process.env.REACT_APP_ANDROMEDA_RPC_URL || 'https://rpc.andromeda-1.andromeda.io:443';
+    // Default to backend proxy to avoid browser CORS
+    this.rpcUrl = process.env.REACT_APP_ANDROMEDA_RPC_URL || '/api/rpc';
+    const flag = process.env.REACT_APP_WALLET_DEMO_OFFLINE;
+    // Default to offline mode unless explicitly disabled with 'false'
+    this.offlineDemo = (typeof flag === 'string') ? flag.toLowerCase() !== 'false' : true;
+    if (this.offlineDemo) {
+      // eslint-disable-next-line no-console
+      console.log('[WalletService] Offline demo mode enabled. Skipping RPC connection.');
+    }
   }
 
   async connectWallet(mnemonic = null) {
     try {
       if (mnemonic) {
-        // Connect with mnemonic
+        // Connect with mnemonic (local signer)
         this.wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
           prefix: 'andr',
         });
@@ -34,14 +42,18 @@ class WalletService {
       const accounts = await this.wallet.getAccounts();
       this.address = accounts[0].address;
 
-      // Create signing client
-      this.client = await SigningCosmWasmClient.connectWithSigner(
-        this.rpcUrl,
-        this.wallet,
-        {
-          gasPrice: GasPrice.fromString('0.025uandr'),
-        }
-      );
+      // Create signing client (skip in offline demo mode to avoid RPC fetch/CORS issues)
+      if (!this.offlineDemo) {
+        this.client = await SigningCosmWasmClient.connectWithSigner(
+          this.rpcUrl,
+          this.wallet,
+          {
+            gasPrice: GasPrice.fromString('0.025uandr'),
+          }
+        );
+      } else {
+        this.client = null; // explicitly no network client
+      }
 
       this.isConnected = true;
       return {
@@ -55,8 +67,15 @@ class WalletService {
   }
 
   async getBalance() {
-    if (!this.client || !this.address) {
-      throw new Error('Wallet not connected');
+    if (!this.address) throw new Error('Wallet not connected');
+
+    // In offline demo mode, return a stubbed zero balance
+    if (this.offlineDemo || !this.client) {
+      return {
+        amount: '0',
+        denom: 'uandr',
+        formatted: `0.00 ANDR`
+      };
     }
 
     try {

@@ -36,7 +36,7 @@ start "AI Service" cmd /k "cd ai-valuation && python app.py"
 timeout /t 3 /nobreak >nul
 start "Backend API" cmd /k "cd backend && npm run dev"
 timeout /t 3 /nobreak >nul
-start "Frontend" cmd /k "cd frontend && npm start"
+start "Frontend" cmd /k "cd frontend && set REACT_APP_WALLET_DEMO_OFFLINE=false && npm start"
 
 echo ✅ All services started!
 echo 🎯 Open http://localhost:3000 to see the demo

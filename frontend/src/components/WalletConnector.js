@@ -100,7 +100,7 @@ const WalletConnector = ({ onConnect, onDisconnect }) => {
         <div className="flex items-center space-x-2 bg-green-50 text-green-800 px-3 py-2 rounded-lg">
           <CheckCircleIcon className="w-4 h-4" />
           <span className="text-sm font-medium">
-            {walletInfo.address.substring(0, 8)}...{walletInfo.address.substring(-6)}
+            {walletInfo.address.substring(0, 8)}...{walletInfo.address.slice(-6)}
           </span>
         </div>
         {balance && (

@@ -3,71 +3,118 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'test-secret';
+const IN_MEMORY = !process.env.MONGODB_URI; // Match server.js behavior
 
-// User Schema with KYC
-const userSchema = new mongoose.Schema({
-  address: { type: String, unique: true, required: true },
-  email: { type: String, unique: true, required: true },
-  password: { type: String },
-  profile: {
-    firstName: String,
-    lastName: String,
-    dateOfBirth: Date,
-    phoneNumber: String,
-    country: String,
-    address: String
-  },
-  kyc: {
-    status: { 
-      type: String, 
-      enum: ['pending', 'submitted', 'approved', 'rejected'], 
-      default: 'pending' 
+// User model (Mongo-backed or in-memory fallback)
+let User;
+if (!IN_MEMORY) {
+  // Mongoose schema/model
+  const userSchema = new mongoose.Schema({
+    address: { type: String, unique: true, required: true },
+    email: { type: String, unique: true, required: true },
+    password: { type: String },
+    profile: {
+      firstName: String,
+      lastName: String,
+      dateOfBirth: Date,
+      phoneNumber: String,
+      country: String,
+      address: String
     },
-    documents: [{
-      type: { type: String, enum: ['passport', 'drivers_license', 'utility_bill'] },
-      url: String,
-      verified: { type: Boolean, default: false },
-      uploaded_at: { type: Date, default: Date.now }
-    }],
-    verification_level: { 
-      type: String, 
-      enum: ['basic', 'intermediate', 'advanced'], 
-      default: 'basic' 
+    kyc: {
+      status: { 
+        type: String, 
+        enum: ['pending', 'submitted', 'approved', 'rejected'], 
+        default: 'pending' 
+      },
+      documents: [{
+        type: { type: String, enum: ['passport', 'drivers_license', 'utility_bill'] },
+        url: String,
+        verified: { type: Boolean, default: false },
+        uploaded_at: { type: Date, default: Date.now }
+      }],
+      verification_level: { 
+        type: String, 
+        enum: ['basic', 'intermediate', 'advanced'], 
+        default: 'basic' 
+      },
+      approved_at: Date,
+      approved_by: String
     },
-    approved_at: Date,
-    approved_by: String
-  },
-  wallet: {
-    connected: { type: Boolean, default: false },
-    balance: { type: Number, default: 0 },
-    staked_amount: { type: Number, default: 0 }
-  },
-  portfolio: {
-    total_invested: { type: Number, default: 0 },
-    current_value: { type: Number, default: 0 },
-    total_dividends: { type: Number, default: 0 },
-    properties: [{
-      property_id: String,
-      shares_owned: Number,
-      purchase_price: Number,
-      purchase_date: Date
-    }]
-  },
-  preferences: {
-    risk_tolerance: { type: String, enum: ['low', 'medium', 'high'], default: 'medium' },
-    investment_goals: [String],
-    notification_settings: {
-      email: { type: Boolean, default: true },
-      sms: { type: Boolean, default: false },
-      push: { type: Boolean, default: true }
+    wallet: {
+      connected: { type: Boolean, default: false },
+      balance: { type: Number, default: 0 },
+      staked_amount: { type: Number, default: 0 }
+    },
+    portfolio: {
+      total_invested: { type: Number, default: 0 },
+      current_value: { type: Number, default: 0 },
+      total_dividends: { type: Number, default: 0 },
+      properties: [{
+        property_id: String,
+        shares_owned: Number,
+        purchase_price: Number,
+        purchase_date: Date
+      }]
+    },
+    preferences: {
+      risk_tolerance: { type: String, enum: ['low', 'medium', 'high'], default: 'medium' },
+      investment_goals: [String],
+      notification_settings: {
+        email: { type: Boolean, default: true },
+        sms: { type: Boolean, default: false },
+        push: { type: Boolean, default: true }
+      }
+    },
+    created_at: { type: Date, default: Date.now },
+    last_login: Date,
+    is_active: { type: Boolean, default: true }
+  });
+
+  User = mongoose.model('User', userSchema);
+} else {
+  // In-memory fallback implementation
+  const mem = { users: [] };
+  class UserMem {
+    constructor(data) {
+      // defaults similar to schema
+      this.address = data.address;
+      this.email = data.email;
+      this.password = data.password;
+      this.profile = data.profile || {};
+      this.kyc = data.kyc || {
+        status: 'pending',
+        documents: [],
+        verification_level: 'basic'
+      };
+      this.wallet = data.wallet || { connected: false, balance: 0, staked_amount: 0 };
+      this.portfolio = data.portfolio || { total_invested: 0, current_value: 0, total_dividends: 0, properties: [] };
+      this.preferences = data.preferences || {
+        risk_tolerance: 'medium',
+        investment_goals: [],
+        notification_settings: { email: true, sms: false, push: true }
+      };
+      this.created_at = data.created_at || new Date();
+      this.last_login = data.last_login;
+      this.is_active = data.is_active ?? true;
     }
-  },
-  created_at: { type: Date, default: Date.now },
-  last_login: Date,
-  is_active: { type: Boolean, default: true }
-});
-
-const User = mongoose.model('User', userSchema);
+    async save() {
+      const idx = mem.users.findIndex(u => u.address === this.address || u.email === this.email);
+      if (idx >= 0) mem.users[idx] = this; else mem.users.push(this);
+    }
+    static async findOne(query) {
+      if (!query) return null;
+      if (query.$or && Array.isArray(query.$or)) {
+        const [{ address }, { email }] = query.$or;
+        return mem.users.find(u => (address && u.address === address) || (email && u.email === email)) || null;
+      }
+      if (query.email) return mem.users.find(u => u.email === query.email) || null;
+      if (query.address) return mem.users.find(u => u.address === query.address) || null;
+      return null;
+    }
+  }
+  User = UserMem;
+}
 
 // JWT Authentication Middleware
 const authenticateToken = (req, res, next) => {

@@ -31,36 +31,10 @@ digital-homes-platform/
 ```
 
 ## Getting Started
-
-### Prerequisites
-- Node.js 16+
-- Python 3.8+
-- MongoDB Atlas account
-- Keplr wallet with Andromeda testnet
-
-### Quick Setup
 1. Clone the repository
 2. Install dependencies: `npm install`
-3. Configure environment variables (see below)
-4. Initialize database: `cd backend && npm run init-db`
-5. Run platform: `npm run dev`
-
-### Environment Configuration
-The platform uses GitHub Secrets for secure configuration. For local development, set these environment variables:
-
-**Required:**
-- `MONGODB_URI` - Your MongoDB Atlas connection string
-- `JWT_SECRET` - Secure string for authentication
-- `ANDROMEDA_MNEMONIC` - Your Keplr testnet wallet mnemonic
-
-**Optional (demo values work):**
-- `REAL_ESTATE_API_KEY=demo_key`
-- `MAPS_API_KEY=demo_key`
-- `STRIPE_SECRET_KEY=sk_test_demo`
-
-**Testnet Configuration:**
-- RPC: `https://rpc.galileo-3.andromeda.io:443`
-- Chain ID: `galileo-3`
+3. Set up environment variables
+4. Run development server: `npm run dev`
 
 ## Hackathon Submission
 Built for the Andromeda Flightplan Hackathon - Track 1: Real World Assets

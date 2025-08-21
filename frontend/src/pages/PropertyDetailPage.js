@@ -5,12 +5,9 @@ import toast from 'react-hot-toast';
 import { 
   MapPinIcon,
   HomeIcon,
-  CurrencyDollarIcon,
-  ChartBarIcon,
   SparklesIcon,
   ShieldCheckIcon,
   CalendarIcon,
-  ArrowTrendingUpIcon
 } from '@heroicons/react/24/outline';
 
 const PropertyDetailPage = () => {
@@ -19,6 +16,7 @@ const PropertyDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [purchaseAmount, setPurchaseAmount] = useState(1);
   const [userAddress] = useState('andr1user123...'); // Mock user address
+  const [isMock, setIsMock] = useState(false);
 
   useEffect(() => {
     fetchProperty();
@@ -26,8 +24,10 @@ const PropertyDetailPage = () => {
 
   const fetchProperty = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/properties/${id}`);
+      // Use relative path so CRA proxy can route to backend
+      const response = await axios.get(`/api/properties/${id}`);
       setProperty(response.data);
+      setIsMock(false);
     } catch (error) {
       console.error('Error fetching property:', error);
       // Mock data for demonstration
@@ -69,6 +69,7 @@ const PropertyDetailPage = () => {
         },
         status: 'active'
       });
+      setIsMock(true);
     } finally {
       setLoading(false);
     }
@@ -76,13 +77,25 @@ const PropertyDetailPage = () => {
 
   const handlePurchase = async () => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/properties/${id}/buy`, {
-        user_address: userAddress,
-        shares_to_buy: purchaseAmount
-      });
-      
-      toast.success(`Successfully purchased ${purchaseAmount} shares!`);
-      fetchProperty(); // Refresh property data
+      if (isMock) {
+        // Simulate a successful purchase locally
+        setProperty((prev) => {
+          if (!prev) return prev;
+          const updated = { ...prev, tokenization: { ...prev.tokenization } };
+          const available = updated.tokenization.total_shares - updated.tokenization.shares_sold;
+          const toBuy = Math.min(purchaseAmount, available);
+          updated.tokenization.shares_sold += toBuy;
+          return updated;
+        });
+        toast.success(`Successfully purchased ${purchaseAmount} shares! (simulated)`);
+      } else {
+        const response = await axios.post(`/api/properties/${id}/buy`, {
+          user_address: userAddress,
+          shares_to_buy: purchaseAmount
+        });
+        toast.success(`Successfully purchased ${purchaseAmount} shares!`);
+        fetchProperty(); // Refresh property data
+      }
     } catch (error) {
       toast.error('Purchase failed. Please try again.');
       console.error('Purchase error:', error);

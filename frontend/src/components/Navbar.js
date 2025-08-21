@@ -8,6 +8,7 @@ import {
   Bars3Icon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
+import WalletConnector from './WalletConnector';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,9 +55,7 @@ const Navbar = () => {
                 </Link>
               );
             })}
-            <button className="btn-primary">
-              Connect Wallet
-            </button>
+            <WalletConnector />
           </div>
 
           {/* Mobile menu button */}
@@ -64,6 +63,7 @@ const Navbar = () => {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-700 hover:text-primary-600 p-2"
+              aria-label="Toggle menu"
             >
               {isOpen ? (
                 <XMarkIcon className="w-6 h-6" />
@@ -77,7 +77,7 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200">
+        <div className="md:hidden bg-white border-t border-gray-200" data-testid="mobile-nav">
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navigation.map((item) => {
               const Icon = item.icon;
@@ -98,9 +98,9 @@ const Navbar = () => {
               );
             })}
             <div className="px-3 py-2">
-              <button className="btn-primary w-full">
-                Connect Wallet
-              </button>
+              <div className="w-full flex justify-start">
+                <WalletConnector />
+              </div>
             </div>
           </div>
         </div>
@@ -110,3 +110,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
