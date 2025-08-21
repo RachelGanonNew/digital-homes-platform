@@ -19,33 +19,23 @@ jobs:
           - 27017:27017
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
     
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-    
     - name: Install Backend Dependencies
       run: |
         cd backend
-        npm install
+        npm ci || npm i --no-audit --no-fund
     
     - name: Install Frontend Dependencies
       run: |
         cd frontend
-        npm install
-    
-    - name: Install AI Service Dependencies
-      run: |
-        cd ai-valuation
-        pip install -r requirements.txt
+        npm ci || npm i --no-audit --no-fund
     
     # Tests are handled in tests.yml; skipping in this workflow
     
