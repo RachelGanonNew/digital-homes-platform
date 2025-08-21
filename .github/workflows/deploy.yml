@@ -12,40 +12,24 @@ jobs:
     permissions:
       contents: write
     
-    services:
-      mongodb:
-        image: mongo:latest
-        ports:
-          - 27017:27017
-    
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
     
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-    
     - name: Install Backend Dependencies
       run: |
         cd backend
-        npm install
+        npm ci || npm i --no-audit --no-fund
     
     - name: Install Frontend Dependencies
       run: |
         cd frontend
-        npm install
-    
-    - name: Install AI Service Dependencies
-      run: |
-        cd ai-valuation
-        pip install -r requirements.txt
+        npm ci || npm i --no-audit --no-fund
     
     # Tests are handled in tests.yml; skipping in this workflow
     
@@ -56,7 +40,9 @@ jobs:
     
     - name: Deploy Frontend to GitHub Pages
       if: github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./frontend/build
+        publish_branch: gh-pages
+        force_orphan: true
