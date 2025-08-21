@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -18,11 +18,7 @@ const PropertyDetailPage = () => {
   const [userAddress] = useState('andr1user123...'); // Mock user address
   const [isMock, setIsMock] = useState(false);
 
-  useEffect(() => {
-    fetchProperty();
-  }, [id]);
-
-  const fetchProperty = async () => {
+  const fetchProperty = useCallback(async () => {
     try {
       // Use relative path so CRA proxy can route to backend
       const response = await axios.get(`/api/properties/${id}`);
@@ -73,7 +69,11 @@ const PropertyDetailPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchProperty();
+  }, [fetchProperty]);
 
   const handlePurchase = async () => {
     try {

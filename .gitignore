@@ -79,7 +79,7 @@ dist
 
 # Gatsby files
 .cache/
-public
+# Do not ignore general public directories; CRA needs frontend/public/index.html committed
 
 # Storybook build outputs
 .out
