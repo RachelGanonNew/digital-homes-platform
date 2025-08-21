@@ -36,7 +36,7 @@ const DashboardPage = () => {
   const [tsData, setTsData] = useState([]);
   const [divLabels, setDivLabels] = useState([]);
   const [divData, setDivData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // Removed unused loading state
 
   useEffect(() => {
     let mounted = true;
@@ -58,7 +58,7 @@ const DashboardPage = () => {
         setDivLabels(['Mar','Apr','May','Jun','Jul','Aug']);
         setDivData([120,140,135,150,160,155]);
       } finally {
-        if (mounted) setLoading(false);
+        // no-op
       }
     })();
     return () => { mounted = false; };

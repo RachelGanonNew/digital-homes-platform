@@ -89,7 +89,7 @@ const PropertyDetailPage = () => {
         });
         toast.success(`Successfully purchased ${purchaseAmount} shares! (simulated)`);
       } else {
-        const response = await axios.post(`/api/properties/${id}/buy`, {
+        await axios.post(`/api/properties/${id}/buy`, {
           user_address: userAddress,
           shares_to_buy: purchaseAmount
         });
